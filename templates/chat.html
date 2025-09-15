@@ -4,78 +4,134 @@
 
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Chatbot</title>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"/>
-	</head>
-	
-	
-	<body>
-		<div class="container-fluid h-100">
-			<div class="row justify-content-center h-100">		
-				<div class="col-md-8 col-xl-6 chat">
-					<div class="card">
-						<div class="card-header msg_head">
-							<div class="d-flex bd-highlight">
-								<div class="img_cont">
-									<img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img">
-									<!-- <img src="https://www.prdistribution.com/spirit/uploads/pressreleases/2019/newsreleases/d83341deb75c4c4f6b113f27b1e42cd8-chatbot-florence-already-helps-thousands-of-patients-to-remember-their-medication.png" class="rounded-circle user_img"> -->
-									<span class="online_icon"></span>
-								</div>
-								<div class="user_info">
-									<span>Medical Chatbot</span>
-									<p>Ask me anything!</p>
-								</div>
-							</div>
-						</div>
-						<div id="messageFormeight" class="card-body msg_card_body">
-							
-							
-						</div>
-						<div class="card-footer">
-							<form id="messageArea" class="input-group">
+    <head>
+        <title>Chatbot</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"/>
+    </head>
+    
+    
+    <body>
+        <div class="container-fluid h-100">
+            <div class="row justify-content-center h-100"> 		
+                <div class="col-md-8 col-xl-6 chat">
+                    <div class="card">
+                        <div class="card-header msg_head">
+                            <div class="d-flex bd-highlight">
+                                <div class="img_cont">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img">
+                                    <span class="online_icon"></span>
+                                </div>
+                                <div class="user_info">
+                                    <span>Medical Chatbot</span>
+                                    <p>Ask me anything!</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="messageFormeight" class="card-body msg_card_body">
+                            
+                            
+                        </div>
+                        <div class="card-footer">
+                            
+                            <div id="image-preview-container" style="display:none;">
+                                <img id="image-preview" src="" alt="Image preview" />
+                                <button type_button="button" id="remove-image">X</button>
+                            </div>
+
+                            <form id="messageArea" class="input-group" enctype="multipart/form-data">
+                                <div class="input-group-prepend">
+                                    <label for="image-upload" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></label>
+                                    <input type="file" id="image-upload" accept="image/*" style="display:none;">
+                                </div>
+                                
                                 <input type="text" id="text" name="msg" placeholder="Type your message..." autocomplete="off" class="form-control type_msg" required/>
-								<div class="input-group-append">
-									<button type="submit" id="send" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<script>
-			$(document).ready(function() {
-				$("#messageArea").on("submit", function(event) {
-					const date = new Date();
-					const hour = date.getHours();
-					const minute = date.getMinutes();
-					const str_time = hour+":"+minute;
-					var rawText = $("#text").val();
+                                <div class="input-group-append">
+                                    <button type="submit" id="send" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            $(document).ready(function() {
+                // --- Form Submission Logic ---
+                $("#messageArea").on("submit", function(event) {
+                    event.preventDefault(); // Stop page reload
 
-					var userHtml = '<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">' + rawText + '<span class="msg_time_send">'+ str_time + '</span></div><div class="img_cont_msg"><img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-circle user_img_msg"></div></div>';
-					
-					$("#text").val("");
-					$("#messageFormeight").append(userHtml);
+                    const date = new Date();
+                    const hour = date.getHours();
+                    const minute = date.getMinutes();
+                    const str_time = hour+":"+minute;
+                    
+                    var rawText = $("#text").val();
+                    var imageFile = $("#image-upload")[0].files[0];
+                    var previewSrc = $("#image-preview").attr("src");
 
-					$.ajax({
-						data: {
-							msg: rawText,	
-						},
-						type: "POST",
-						url: "/get",
-					}).done(function(data) {
-						var botHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg"></div><div class="msg_cotainer">' + data + '<span class="msg_time">' + str_time + '</span></div></div>';
-						$("#messageFormeight").append($.parseHTML(botHtml));
-					});
-					event.preventDefault();
-				});
-			});
-		</script>
+                    if (!rawText && !imageFile) {
+                        return; // Don't send empty
+                    }
+
+                    // --- Build User HTML ---
+                    var userMsgContent = rawText;
+                    if (imageFile && previewSrc) {
+                        // Add the image to the user's message bubble
+                        userMsgContent += '<br><img src="' + previewSrc + '" style="max-width: 150px; border-radius: 5px; margin-top: 5px;">';
+                    }
+                    var userHtml = '<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">' + userMsgContent + '<span class="msg_time_send">'+ str_time + '</span></div><div class="img_cont_msg"><img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-circle user_img_msg"></div></div>';
+                    
+                    $("#messageFormeight").append(userHtml);
+                    $("#text").val("");
+                    $("#remove-image").click(); // Clear the preview
+
+                    // --- Create FormData ---
+                    var formData = new FormData();
+                    formData.append('msg', rawText);
+                    if (imageFile) {
+                        formData.append('image', imageFile);
+                    }
+
+                    // --- AJAX Call with FormData ---
+                    $.ajax({
+                        data: formData,        // Use FormData object
+                        type: "POST",
+                        url: "/get",
+                        contentType: false,    // Must be false for FormData
+                        processData: false,    // Must be false for FormData
+                    }).done(function(data) {
+                        var botHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg"></div><div class="msg_cotainer">' + data + '<span class="msg_time">' + str_time + '</span></div></div>';
+                        $("#messageFormeight").append($.parseHTML(botHtml));
+                        // Scroll to bottom
+                        $("#messageFormeight").scrollTop($("#messageFormeight")[0].scrollHeight);
+                    });
+                });
+
+                // --- Image Preview Logic ---
+                $("#image-upload").on("change", function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            $("#image-preview").attr("src", e.target.result);
+                            $("#image-preview-container").show();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // --- Remove Image Logic ---
+                $("#remove-image").on("click", function() {
+                    $("#image-upload").val(""); // Clear the file input
+                    $("#image-preview").attr("src", "");
+                    $("#image-preview-container").hide();
+                });
+            });
+        </script>
         
     </body>
 </html>
